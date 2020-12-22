@@ -35,6 +35,7 @@ function Chat() {
       }
 
    const stopRec=()=>{
+       setIsRecord(false);
                          recorder.stop()
                          .getMp3().then(([buffer, blob]) => {
         // do what ever you want with buffer and blob
