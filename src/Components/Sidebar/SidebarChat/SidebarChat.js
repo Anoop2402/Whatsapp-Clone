@@ -4,6 +4,7 @@ import './SidebarChat.css';
 import db from '../../../firebase';
 import { Link } from 'react-router-dom';
 import {useStateValue} from '../../../StateProvider';
+import firebase from 'firebase';
 
 function SidebarChat({addNewChat,name, id}) {
 
@@ -32,6 +33,7 @@ function SidebarChat({addNewChat,name, id}) {
         if(roomName){
             db.collection('rooms').add({
                 Name:roomName,
+                createdAt:firebase.firestore.FieldValue.serverTimestamp()
             });
         }
     } 
@@ -43,7 +45,7 @@ function SidebarChat({addNewChat,name, id}) {
             <Avatar src= {`https://avatars.dicebear.com/api/human/${seed}.svg`} />
             <div className="sidebar_chat_info">
                 <h2>{name}</h2>
-                <p>{messages[0]?<div className="messag"></div>e}</p>
+                <p>{messages[0]?.message}</p>
             </div>
             
         </div>
