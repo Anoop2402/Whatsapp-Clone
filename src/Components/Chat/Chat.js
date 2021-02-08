@@ -55,7 +55,7 @@ function Chat() {
 
                         }).catch((e) => {
                         alert('We could not retrieve your message');
-                        console.log(e);
+                       
                         });
                     }
     //Emoticon
@@ -80,7 +80,7 @@ const [messages, setMessages] = useState([]);
 
     
 const [{user}, dispatch]=useStateValue();
-console.log("record",isRecord);
+
 
 const sendMessage=(e)=>{
         e.preventDefault();
@@ -136,7 +136,7 @@ const sendMessage=(e)=>{
     }, [roomId])
     let time=new Date(
         messages[messages.length-1]?.timestamp?.toDate()).toLocaleString();
-console.log(time);
+
 let created=new Date(roomName?.createdAt?.toDate()).toLocaleString();
 
 return (
@@ -187,7 +187,7 @@ return (
             </div>
 
             <div className="chat_body">
-            {console.log(messages.name, user.displayName)}
+           
                {messages.map((text)=>(
                 <p className={`chat_message  ${text.name === user.displayName && "chat_reciever"}`}>
                 <span className="chat_name">{text.name}</span>
