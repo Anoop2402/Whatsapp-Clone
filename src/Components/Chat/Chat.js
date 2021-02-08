@@ -6,14 +6,16 @@ import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
 import {React, useState, useEffect} from 'react'
 import "./Chat.css";
-import {useParams} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import db from '../../firebase';
 import {useStateValue} from '../../StateProvider';
 import firebase from 'firebase';
 import Picker from 'emoji-picker-react';
 import MicRecorder from '../../../node_modules/mic-recorder-to-mp3';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import MicOffIcon from '@material-ui/icons/MicOff';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
  
 
@@ -21,6 +23,7 @@ function Chat() {
 
 
     const [isRecord, setIsRecord] = useState(false);
+    const history=useHistory();
     const recorder = new MicRecorder({
         bitRate: 128
       });
@@ -81,17 +84,41 @@ console.log("record",isRecord);
 
 const sendMessage=(e)=>{
         e.preventDefault();
-          
-        db.collection('rooms').doc(roomId).collection('messages').add({
-            message:input,
-            name:user.displayName,
-            timestamp:firebase.firestore.FieldValue.serverTimestamp(),
-        });
+       
+        if(input){
 
+            db.collection('rooms').doc(roomId).collection('messages').add({
+                message:input,
+                name:user.displayName,
+                timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+            });
+    
+
+        }
+        
+        
         setInput('');
     }
 
+
     const {roomId}=useParams();
+
+
+    const deleteChatRoom=()=>{
+        if(roomId){
+                db.collection('rooms').doc(roomId).delete(
+                    err=>{
+                        if(err){alert(err)}
+                        else{
+                            history.push('/');
+                        }
+                    }
+                )
+                setMessages('')
+                history.push('/');
+
+        }
+    }
 
     useEffect(() => {
       if(roomId){
@@ -110,7 +137,7 @@ const sendMessage=(e)=>{
     let time=new Date(
         messages[messages.length-1]?.timestamp?.toDate()).toLocaleString();
 console.log(time);
-let created=new Date(roomName.createdAt?.toDate()).toLocaleString();
+let created=new Date(roomName?.createdAt?.toDate()).toLocaleString();
 
 return (
         <div className="chat">
@@ -118,7 +145,7 @@ return (
             <Avatar />
 
             <div className="chat_headerInfo">
-            <h3>{roomName.Name}</h3>
+            <h3>{roomName?.Name}</h3>
             {
                 (time==="Invalid Date" && created==="Invalid Date")?
                     (            
@@ -131,7 +158,7 @@ return (
                             </p>)
                             :( 
                                 (time==="Invalid Date")
-                                ?(<p>Created at {new Date(roomName.createdAt?.toDate()).toLocaleString()}</p>)
+                                ?(<p>Created at {new Date(roomName?.createdAt?.toDate()).toLocaleString()}</p>)
                                 :(<p>Last seen at {new Date(messages[messages.length-1]?.timestamp?.toDate()).toLocaleString()}</p>)
                                                
                             )
@@ -151,9 +178,11 @@ return (
                      <AttachFile />
                     </IconButton>
 
-                    <IconButton>
-                     <MoreVert />
-                    </IconButton>                 
+                    <IconButton onClick={deleteChatRoom}>
+                     <DeleteIcon />
+                    </IconButton>
+
+
             </div>
             </div>
 
